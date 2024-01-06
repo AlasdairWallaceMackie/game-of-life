@@ -7,7 +7,8 @@ from game import Game
 class App:
   def __init__(self):
     pyxel.init(WINDOW_WIDTH, WINDOW_HEIGHT)
-    # pyxel.load("sprites.pyxres")
+    pyxel.mouse(True)
+    pyxel.load("sprites.pyxres")
 
     self.game = Game()
 
