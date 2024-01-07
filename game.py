@@ -16,6 +16,11 @@ class Game:
 
   def update(self):
     self.update_ui()
+    if not self.paused:
+      self.update_cells()
+
+    if pyxel.btnp(pyxel.KEY_SPACE, 9999, 9999):
+      self.toggle_pause_game()
 
     if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and is_mouse_in_window():
       self.toggle_cell(pyxel.mouse_x, pyxel.mouse_y)
@@ -31,18 +36,63 @@ class Game:
     self.paused ^= True
 
   def toggle_cell(self, x, y):
-    self.grid[x][y] ^= 1
+    self.grid[x][y] ^= True
 
   def get_blank_grid(self):
     new_grid = []
 
     for x in range(WINDOW_WIDTH):
-      new_grid.append([0 for y in range(WINDOW_HEIGHT)])
+      new_grid.append([False for y in range(WINDOW_HEIGHT)])
 
     return new_grid
 
   def reset_grid(self):
     self.grid = self.get_blank_grid()
+
+  def update_cells(self):
+    new_grid = self.get_blank_grid()
+
+    for x in range(len(self.grid)):
+      for y in range(len(self.grid[x])):
+        neighbor_count = self.get_cell_neighbor_count(x, y)
+        cell_alive = self.grid[x][y]
+
+        if cell_alive:
+          """
+          Any live cell with fewer than two live neighbors dies, as if by underpopulation.
+          Any live cell with two or three live neighbors lives on to the next generation.
+          Any live cell with more than three live neighbors dies, as if by overpopulation.
+          """
+          new_grid[x][y] = not neighbor_count < 2 and not neighbor_count > 3
+        elif neighbor_count == 3:
+          """
+          Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+          """
+          new_grid[x][y] = True
+
+    self.grid = new_grid
+
+        
+  def get_cell_neighbor_count(self, x, y):
+    count = 0
+    
+    for nx, ny in [
+      (x-1, y),
+      (x-1, y-1),
+      (x-1, y+1),
+      (x+1, y),
+      (x+1, y-1),
+      (x+1, y+1),
+      (x, y-1),
+      (x, y+1),
+    ]:
+      if not 0 < nx < WINDOW_WIDTH - 1 or not 0 < ny < WINDOW_HEIGHT - 1:
+        continue
+
+      if self.grid[nx][ny]:
+        count += 1
+
+    return count
 
   def update_ui(self):
     for element in self.ui_elements:
