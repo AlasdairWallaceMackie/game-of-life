@@ -1,6 +1,7 @@
 import pyxel
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT, CELL_COLOR
 import ui
+from cursor import Cursor
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT, CELL_COLOR
 
 class Game:
 
@@ -14,6 +15,8 @@ class Game:
       ui.ClearButton(WINDOW_WIDTH - pyxel.TILE_SIZE - 1, 2, on_click=self.reset_grid),
     ]
 
+    self.cursor = Cursor()
+
   def update(self):
     self.update_ui()
     if not self.paused:
@@ -23,12 +26,13 @@ class Game:
       self.toggle_pause_game()
 
     if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and is_mouse_in_window():
-      self.toggle_cell(pyxel.mouse_x, pyxel.mouse_y)
+      self.grid[pyxel.mouse_x][pyxel.mouse_y] = True
 
   def draw(self):
     self.draw_cells()
     self.draw_ui()
     self.draw_pause_symbol(2, WINDOW_HEIGHT - pyxel.TILE_SIZE - 2)
+    self.cursor.draw(pyxel.mouse_x, pyxel.mouse_y)
 
   ######################
 

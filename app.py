@@ -8,7 +8,6 @@ class App:
 
   def __init__(self):
     pyxel.init(WINDOW_WIDTH, WINDOW_HEIGHT)
-    pyxel.mouse(True)
     pyxel.load("sprites.pyxres")
 
     self.game = Game()
