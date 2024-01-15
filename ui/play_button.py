@@ -1,4 +1,5 @@
 import pyxel
+import controls
 from . import UIObject
 
 class PlayButton(UIObject):
@@ -10,7 +11,7 @@ class PlayButton(UIObject):
     self.h = 8
 
   def draw(self):
-    u = 1 * pyxel.TILE_SIZE if self.is_mouse_clicked_hold() else 0
+    u = 1 * pyxel.TILE_SIZE if (self.is_mouse_clicked_hold() or pyxel.btn(controls.PAUSE)) else 0
 
     pyxel.blt(
       self.x, self.y,

@@ -1,5 +1,6 @@
 import pyxel
 import ui
+import controls
 from cursor import Cursor
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, CELL_COLOR
 
@@ -22,8 +23,11 @@ class Game:
     if not self.paused:
       self.update_cells()
 
-    if pyxel.btnp(pyxel.KEY_SPACE, 9999, 9999):
+    if pyxel.btnp(controls.PAUSE, 9999, 9999):
       self.toggle_pause_game()
+
+    if pyxel.btn(controls.CLEAR):
+      self.reset_grid()
 
     if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and is_mouse_in_window():
       self.grid[pyxel.mouse_x][pyxel.mouse_y] = True
