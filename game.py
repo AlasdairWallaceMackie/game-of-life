@@ -32,7 +32,7 @@ class Game:
     self.draw_cells()
     self.draw_ui()
     self.draw_pause_symbol(2, WINDOW_HEIGHT - pyxel.TILE_SIZE - 2)
-    self.cursor.draw(pyxel.mouse_x, pyxel.mouse_y)
+    self.cursor.draw(pyxel.mouse_x, pyxel.mouse_y, is_hovering_ui=self.is_cursor_hovering_ui())
 
   ######################
 
@@ -76,7 +76,6 @@ class Game:
 
     self.grid = new_grid
 
-        
   def get_cell_neighbor_count(self, x, y):
     count = 0
     
@@ -101,6 +100,13 @@ class Game:
   def update_ui(self):
     for element in self.ui_elements:
       element.update()
+
+  def is_cursor_hovering_ui(self):
+    for element in self.ui_elements:
+      if element.is_mouse_hovered():
+        return True
+
+    return False
 
   def draw_cells(self):
     for x in range(WINDOW_WIDTH):
