@@ -43,10 +43,10 @@ class Game:
     self.grid[x][y] ^= True
 
   def get_blank_grid(self):
-    new_grid = []
+    new_grid = {}
 
     for x in range(WINDOW_WIDTH):
-      new_grid.append([False for y in range(WINDOW_HEIGHT)])
+      new_grid[x] = {y:False for y in range(WINDOW_HEIGHT)}
 
     return new_grid
 
