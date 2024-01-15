@@ -10,11 +10,18 @@ class Game:
     self.grid = self.get_blank_grid()
 
     self.paused = True
+    self.show_menu = False
 
-    self.ui_elements = [
-      ui.PlayButton(2, 2, on_click=self.toggle_pause_game),
-      ui.ClearButton(WINDOW_WIDTH - pyxel.TILE_SIZE - 1, 2, on_click=self.reset_grid),
-    ]
+    self.ui_elements = {
+      "play_button": ui.PlayButton(2, 2, on_click=self.toggle_pause_game),
+      "clear_button": ui.ClearButton(WINDOW_WIDTH - pyxel.TILE_SIZE - 1, 2, on_click=self.reset_grid),
+      "menu": ui.Menu(32, 32, on_click=self.close_menu),
+      "menu_button":ui.MenuButton(
+        WINDOW_WIDTH - pyxel.TILE_SIZE - 2,
+        WINDOW_HEIGHT - pyxel.TILE_SIZE - 2,
+        on_click=self.toggle_menu
+      )
+    }
 
     self.cursor = Cursor()
 
@@ -29,19 +36,32 @@ class Game:
     if pyxel.btn(controls.CLEAR):
       self.reset_grid()
 
+    if pyxel.btnp(controls.MENU, 9999, 9999):
+      self.toggle_menu()
+
     if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and is_mouse_in_window():
       self.grid[pyxel.mouse_x][pyxel.mouse_y] = True
 
   def draw(self):
     self.draw_cells()
     self.draw_ui()
-    self.draw_pause_symbol(2, WINDOW_HEIGHT - pyxel.TILE_SIZE - 2)
+    
+    if self.paused:
+      self.draw_pause_symbol(2, WINDOW_HEIGHT - pyxel.TILE_SIZE - 2)
+      pyxel.text(12, WINDOW_HEIGHT - pyxel.TILE_SIZE, "Paused", pyxel.COLOR_WHITE)
+
     self.cursor.draw(pyxel.mouse_x, pyxel.mouse_y, is_hovering_ui=self.is_cursor_hovering_ui())
 
   ######################
 
   def toggle_pause_game(self):
     self.paused ^= True
+
+  def toggle_menu(self):
+    self.show_menu ^= True
+  
+  def close_menu(self):
+    self.show_menu = False
 
   def toggle_cell(self, x, y):
     self.grid[x][y] ^= True
@@ -102,11 +122,14 @@ class Game:
     return count
 
   def update_ui(self):
-    for element in self.ui_elements:
+    for element in self.ui_elements.values():
       element.update()
 
   def is_cursor_hovering_ui(self):
-    for element in self.ui_elements:
+    for key, element in self.ui_elements.items():
+      if key == "menu":
+        continue
+
       if element.is_mouse_hovered():
         return True
 
@@ -119,18 +142,20 @@ class Game:
           pyxel.pset(x, y, CELL_COLOR)
 
   def draw_ui(self):
-    for element in self.ui_elements:
+    for key, element in self.ui_elements.items():
+      if key == "menu" and not self.show_menu:
+        continue
+
       element.draw()
 
   def draw_pause_symbol(self, x, y):
-    if self.paused:
-      pyxel.blt(
-        x, y,
-        0,
-        0, pyxel.TILE_SIZE * 2,
-        pyxel.TILE_SIZE, pyxel.TILE_SIZE,
-        pyxel.COLOR_BLACK
-      )
+    pyxel.blt(
+      x, y,
+      0,
+      0, pyxel.TILE_SIZE * 2,
+      pyxel.TILE_SIZE, pyxel.TILE_SIZE,
+      pyxel.COLOR_BLACK
+    )
 
 ########
 ########
