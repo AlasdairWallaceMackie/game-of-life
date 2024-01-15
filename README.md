@@ -3,8 +3,6 @@
 
 Written in Python using the [Pyxel](https://github.com/kitao/pyxel) library
 
-### [Try it out in your browser](https://kitao.github.io/pyxel/wasm/launcher/?play=AlasdairWallaceMackie.game-of-life.wasm)
-
 ## Examples
 
 ### Draw pixels on the grid, click Play and see what happens!
